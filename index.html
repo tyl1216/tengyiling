@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网页抓小球</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部 UI 栏：分数 + 倒计时 + 开始按钮 -->
+    <header class="top-bar">
+        <div class="score-display">分数：<span id="score">0</span></div>
+        <div class="timer-display" id="timer">02:00</div>
+        <button class="start-btn" id="startBtn">开始</button>
+    </header>
+
+    <!-- 游戏区域 -->
+    <main class="game-area" id="gameArea">
+        <!-- 小球容器（由 JS 动态创建，T1 阶段为空） -->
+    </main>
+
+    <!-- 结束蒙层（T1 阶段静态隐藏） -->
+    <div class="overlay hidden" id="overlay">
+        <div class="overlay-content">
+            <h1>游戏结束</h1>
+            <p class="final-score">最终得分：<span id="finalScore">0</span></p>
+            <button class="restart-btn" id="restartBtn">再来一局</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
