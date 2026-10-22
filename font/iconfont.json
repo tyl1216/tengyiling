@@ -1,0 +1,44 @@
+{
+  "id": "5238932",
+  "name": "svj0330",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "47115709",
+      "name": "232_安全",
+      "font_class": "a-232_anquan",
+      "unicode": "e9af",
+      "unicode_decimal": 59823
+    },
+    {
+      "icon_id": "47115710",
+      "name": "232_茶歇",
+      "font_class": "a-232_chaxie",
+      "unicode": "e9b0",
+      "unicode_decimal": 59824
+    },
+    {
+      "icon_id": "47115711",
+      "name": "232_存储",
+      "font_class": "a-232_cunchu",
+      "unicode": "e9b1",
+      "unicode_decimal": 59825
+    },
+    {
+      "icon_id": "47115712",
+      "name": "232_定位",
+      "font_class": "a-232_dingwei",
+      "unicode": "e9b2",
+      "unicode_decimal": 59826
+    },
+    {
+      "icon_id": "48416605",
+      "name": "星星 (2)",
+      "font_class": "a-xingxing2",
+      "unicode": "e791",
+      "unicode_decimal": 59281
+    }
+  ]
+}
