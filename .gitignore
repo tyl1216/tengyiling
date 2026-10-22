@@ -1,6 +1,7 @@
 # 排除 Superpowers 框架文件（不属于游戏项目）
 rules/
 superpowers/
+skills/
 
 # 系统文件
 .DS_Store
