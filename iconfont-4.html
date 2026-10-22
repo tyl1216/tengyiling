@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 移动端 viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>iconfont-4 · 移动端底部导航（SVG 图标）</title>
+
+    <style>
+        /* ========== Design Tokens ========== */
+        :root {
+            --tyl_bg:         #F7F7FA;   /* iOS 浅灰 */
+            --tyl_surface:    rgba(255,255,255,0.78);  /* 毛玻璃 */
+            --tyl_active:     #007AFF;   /* iOS Blue */
+            --tyl_inactive:   #999999;
+            --tyl_text:       #1C1C1E;
+            --tyl_badge:      #FF3B30;   /* iOS 红 */
+            --tyl_badge-text: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+            background-color: var(--tyl_bg);
+            color: var(--tyl_text);
+            min-height: 100vh;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* ========== 移动端容器 ========== */
+        .tyl_mobile-shell {
+            max-width: 430px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background-color: var(--tyl_bg);
+            position: relative;
+            overflow: hidden;
+            /* 桌面预览：iPhone 外框感 */
+            box-shadow: 0 0 40px rgba(0,0,0,0.08);
+        }
+
+        /* 首页回退 */
+        .tyl_home-bar {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            padding-top: calc(env(safe-area-inset-top, 0px) + 10px);
+            background-color: var(--tyl_surface);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 0.5px solid rgba(0,0,0,0.08);
+        }
+        .tyl_home-bar a {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--tyl_active);
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 0;
+            font-weight: 400;
+        }
+
+        /* ========== 主内容区 ========== */
+        .tyl_content {
+            padding: 20px 20px 100px;
+            min-height: calc(100vh - 60px);
+        }
+        .tyl_content-title {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+        .tyl_content-sub {
+            font-size: 13px;
+            color: #8E8E93;
+            margin-bottom: 20px;
+        }
+        /* iOS 风格卡片 */
+        .tyl_content-card {
+            background-color: #fff;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 0.5px solid rgba(0,0,0,0.05);
+        }
+
+        /* ========== 底部导航（iOS 毛玻璃） ========== */
+        .tyl_tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            /* iOS 毛玻璃 */
+            background-color: var(--tyl_surface);
+            backdrop-filter: saturate(180%) blur(20px);
+            -webkit-backdrop-filter: saturate(180%) blur(20px);
+            display: flex;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+            border-top: 0.5px solid rgba(0,0,0,0.08);
+            z-index: 99;
+        }
+        .tyl_tabbar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 0 8px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--tyl_inactive);
+            transition: color 0.18s ease;
+            position: relative;
+        }
+        .tyl_tabbar-item.tyl_active {
+            color: var(--tyl_active);
+        }
+
+        /* 图标容器 */
+        .tyl_tabbar-icon {
+            position: relative;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+        /* Lucide SVG 用 img 方式引用 */
+        .tyl_tabbar-icon img {
+            width: 26px;
+            height: 26px;
+            /* Lucide SVG 的 stroke="#292524" 硬编码了 */
+            /* 默认用 filter 改成 iOS 灰 */
+            filter: brightness(0) saturate(100%) invert(64%) sepia(0%) saturate(17%) hue-rotate(170deg) brightness(90%) contrast(87%);
+            transition: filter 0.18s ease, transform 0.18s ease;
+            display: block;
+        }
+        .tyl_tabbar-item.tyl_active .tyl_tabbar-icon img {
+            /* iOS Blue */
+            filter: brightness(0) saturate(100%) invert(42%) sepia(73%) saturate(2000%) hue-rotate(205deg) brightness(103%) contrast(103%);
+        }
+        .tyl_tabbar-label {
+            font-size: 10.5px;
+            font-weight: 500;
+            letter-spacing: 0.1px;
+        }
+
+        /* ========== 徽章系统 ========== */
+
+        /* iOS 数字徽章 — 更圆润的胶囊 */
+        .tyl_badge {
+            position: absolute;
+            top: -2px;
+            right: -10px;
+            min-width: 16px;
+            height: 16px;
+            padding: 0 4px;
+            background-color: var(--tyl_badge);
+            color: var(--tyl_badge-text);
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 16px;
+            text-align: center;
+            border-radius: 8px;
+            /* iOS 徽章不需要外框，毛玻璃自然形成层次 */
+            font-family: -apple-system, "SF Pro Text", sans-serif;
+            z-index: 1;
+        }
+        /* iOS 红点 */
+        .tyl_badge-dot {
+            position: absolute;
+            top: 0px;
+            right: 4px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--tyl_badge);
+            border-radius: 50%;
+            z-index: 1;
+            /* iOS 红点有微妙的 scale bounce */
+            animation: tyl_ios-dot 2s ease-in-out infinite;
+        }
+        @keyframes tyl_ios-dot {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.2); }
+        }
+
+        /* ========== 点击反馈 ========== */
+        .tyl_tabbar-item:active .tyl_tabbar-icon img {
+            transform: scale(0.88);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tyl_mobile-shell">
+
+        <!-- 首页回退 -->
+        <div class="tyl_home-bar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                 width="16" height="16" style="margin-right:4px;">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            <a href="index.html">Home</a>
+        </div>
+
+        <!-- 主内容区 -->
+        <main class="tyl_content">
+            <h2 class="tyl_content-title">底部导航 · 毛玻璃</h2>
+            <p class="tyl_content-sub">Lucide SVG · iOS 风格 · safe-area 适配</p>
+
+            <div class="tyl_content-card">
+                🧊 iOS 毛玻璃效果：<code>backdrop-filter: blur(20px)</code>，颜色穿透，层次细腻。
+            </div>
+            <div class="tyl_content-card">
+                📍 <strong>发现</strong> 有红点，<strong>消息</strong> 有 3 条未读。徽章用绝对定位叠在 img 右上角。
+            </div>
+            <div class="tyl_content-card">
+                🎨 Lucide SVG 用 CSS <code>filter: brightness(0) invert(...)</code> 改颜色——
+                因为 img 引用 SVG 时，<code>color</code> CSS 属性不生效，只能用 filter hack。
+            </div>
+            <div class="tyl_content-card">
+                📱 <code>viewport-fit=cover</code> + <code>env(safe-area-inset-bottom)</code> 适配刘海屏。
+            </div>
+            <div class="tyl_content-card">
+                ✨ 点击切换 active 状态，SVG 颜色从 iOS 灰 #999 切换为 iOS Blue #007AFF。
+            </div>
+            <div class="tyl_content-card">
+                🔗 iconfont-3（字体图标版）用的是 font/iconfont.css；本页（SVG 版）用的是 cdn/lucide/*.svg。
+            </div>
+        </main>
+
+        <!-- ========== 底部导航 ========== -->
+        <nav class="tyl_tabbar">
+
+            <!-- 1. 首页 -->
+            <a class="tyl_tabbar-item tyl_active" data-tab="home" href="javascript:void(0)">
+                <div class="tyl_tabbar-icon">
+                    <img src="cdn/lucide/home.svg" alt="home">
+                </div>
+                <span class="tyl_tabbar-label">首页</span>
+            </a>
+
+            <!-- 2. 发现 · 红点 -->
+            <a class="tyl_tabbar-item" data-tab="discover" href="javascript:void(0)">
+                <div class="tyl_tabbar-icon">
+                    <img src="cdn/lucide/star.svg" alt="discover">
+                    <span class="tyl_badge-dot" aria-label="有新动态"></span>
+                </div>
+                <span class="tyl_tabbar-label">发现</span>
+            </a>
+
+            <!-- 3. 消息 · 数字徽章 -->
+            <a class="tyl_tabbar-item" data-tab="message" href="javascript:void(0)">
+                <div class="tyl_tabbar-icon">
+                    <img src="cdn/lucide/bell.svg" alt="message">
+                    <span class="tyl_badge" aria-label="3 条未读">3</span>
+                </div>
+                <span class="tyl_tabbar-label">消息</span>
+            </a>
+
+            <!-- 4. 我的 · 红点 -->
+            <a class="tyl_tabbar-item" data-tab="me" href="javascript:void(0)">
+                <div class="tyl_tabbar-icon">
+                    <img src="cdn/lucide/user.svg" alt="me">
+                    <span class="tyl_badge-dot" aria-label="有新动态"></span>
+                </div>
+                <span class="tyl_tabbar-label">我的</span>
+            </a>
+
+        </nav>
+
+    </div>
+
+    <script>
+        /* ========== TYL 规则 ========== */
+        const tyl_tabs = document.querySelectorAll(".tyl_tabbar-item");
+        tyl_tabs.forEach(item => {
+            item.addEventListener("click", () => {
+                tyl_tabs.forEach(t => t.classList.remove("tyl_active"));
+                item.classList.add("tyl_active");
+            });
+        });
+    </script>
+
+</body>
+</html>
