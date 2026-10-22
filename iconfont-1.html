@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IconFont 1 — Font Awesome 字体图标</title>
+
+    <!-- Font Awesome 本地 CSS -->
+    <link rel="stylesheet" href="cdn/fontawesome/css/all.min.css">
+
+    <style>
+        /* ========== TYL 规则：所有类名 tyl_ 开头 ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background-color: #FFF8DC;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .tyl_navbar {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            background-color: #2E86AB;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .tyl_navbar h1 {
+            flex: 1;
+            font-size: 20px;
+        }
+
+        /* 首页回退按钮（TYL 规则新建 HTML 必须有） */
+        .tyl_home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background-color: #fff;
+            color: #2E86AB;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: transform 0.15s;
+        }
+        .tyl_home-btn:hover {
+            transform: translateY(-2px);
+            background-color: #e8f4fb;
+        }
+
+        /* 页面说明 */
+        .tyl_intro {
+            max-width: 900px;
+            margin: 24px auto 0;
+            padding: 16px 24px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            line-height: 1.8;
+            color: #555;
+        }
+        .tyl_intro code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* 图标展示网格 */
+        .tyl_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 24px auto 40px;
+            padding: 0 24px;
+        }
+        .tyl_card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .tyl_card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+        .tyl_icon-area {
+            font-size: 36px;
+            color: #2E86AB;
+            margin-bottom: 8px;
+        }
+        .tyl_icon-label {
+            font-size: 12px;
+            color: #888;
+            font-family: "Consolas", monospace;
+        }
+
+        /* 不同颜色变体 */
+        .tyl_card[data-variant="solid"] .tyl_icon-area     { color: #2E86AB; }
+        .tyl_card[data-variant="regular"] .tyl_icon-area   { color: #27AE60; }
+        .tyl_card[data-variant="brands"] .tyl_icon-area    { color: #E67E22; }
+        .tyl_card[data-variant="duo"] .tyl_icon-area i:nth-child(2) { margin-left: 6px; color: #E74C3C; }
+
+        /* 不同尺寸 */
+        .tyl_card[data-size="sm"] .tyl_icon-area { font-size: 20px; }
+        .tyl_card[data-size="md"] .tyl_icon-area { font-size: 36px; }
+        .tyl_card[data-size="lg"] .tyl_icon-area { font-size: 52px; }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航栏 + 首页回退按钮 -->
+    <nav class="tyl_navbar">
+        <h1><i class="fa-solid fa-icons"></i> Font Awesome 字体图标展示</h1>
+        <a class="tyl_home-btn" href="index.html">
+            <i class="fa-solid fa-house"></i> 返回首页
+        </a>
+    </nav>
+
+    <!-- 页面说明 -->
+    <section class="tyl_intro">
+        <p>
+            本页演示 <strong>Font Awesome 6.7.2</strong>（免费版）的<strong>字体图标</strong>用法：
+            通过 <code>&lt;i class="fa-solid fa-xxx"&gt;</code> 标签直接在 HTML 中引用。
+            CSS + WOFF2 字体文件均下载到本地 <code>cdn/fontawesome/</code> 目录，支持离线使用。
+        </p>
+        <p>
+            覆盖三种免费风格：<code>fa-solid</code>（实心）、<code>fa-regular</code>（常规）、<code>fa-brands</code>（品牌）。
+        </p>
+    </section>
+
+    <!-- 图标网格 -->
+    <section class="tyl_grid" id="tyl_gridFa">
+        <!-- 由 JS 动态填充，支持 hover 复制 class -->
+    </section>
+
+    <!-- 复制提示 -->
+    <div id="tyl_tooltip" style="
+        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+        background-color: #333; color: #fff; padding: 10px 20px; border-radius: 20px;
+        font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        z-index: 999;">已复制 class!</div>
+
+    <script>
+        /* ========== TYL 规则：变量名 tyl_ 开头 ========== */
+        const tyl_faIcons = [
+            // Solid 实心
+            { cls: "fa-solid fa-house",          label: "house" },
+            { cls: "fa-solid fa-heart",          label: "heart" },
+            { cls: "fa-solid fa-star",           label: "star" },
+            { cls: "fa-solid fa-user",           label: "user" },
+            { cls: "fa-solid fa-search",         label: "search" },
+            { cls: "fa-solid fa-bell",           label: "bell" },
+            { cls: "fa-solid fa-envelope",       label: "envelope" },
+            { cls: "fa-solid fa-settings",       label: "gear" },
+            { cls: "fa-solid fa-download",       label: "download" },
+            { cls: "fa-solid fa-upload",         label: "upload" },
+            { cls: "fa-solid fa-trash",          label: "trash" },
+            { cls: "fa-solid fa-edit",           label: "edit" },
+            { cls: "fa-solid fa-check",          label: "check" },
+            { cls: "fa-solid fa-xmark",          label: "xmark" },
+            { cls: "fa-solid fa-plus",           label: "plus" },
+            { cls: "fa-solid fa-minus",          label: "minus" },
+            { cls: "fa-solid fa-play",           label: "play" },
+            { cls: "fa-solid fa-pause",          label: "pause" },
+            { cls: "fa-solid fa-music",          label: "music" },
+            { cls: "fa-solid fa-camera",          label: "camera" },
+            { cls: "fa-solid fa-image",          label: "image" },
+            { cls: "fa-solid fa-file",           label: "file" },
+            { cls: "fa-solid fa-folder",         label: "folder" },
+            { cls: "fa-solid fa-lock",           label: "lock" },
+
+            // Regular 常规
+            { cls: "fa-regular fa-heart",        label: "heart (regular)" },
+            { cls: "fa-regular fa-star",         label: "star (regular)" },
+            { cls: "fa-regular fa-bookmark",     label: "bookmark (regular)" },
+            { cls: "fa-regular fa-folder-open",  label: "folder-open" },
+            { cls: "fa-regular fa-user",         label: "user (regular)" },
+
+            // Brands 品牌
+            { cls: "fa-brands fa-github",        label: "github" },
+            { cls: "fa-brands fa-twitter",       label: "twitter" },
+            { cls: "fa-brands fa-weixin",        label: "weixin" },
+            { cls: "fa-brands fa-weibo",         label: "weibo" },
+            { cls: "fa-brands fa-js",            label: "javascript" },
+            { cls: "fa-brands fa-vuejs",         label: "vue.js" },
+            { cls: "fa-brands fa-react",          label: "react" },
+            { cls: "fa-brands fa-html5",         label: "html5" },
+            { cls: "fa-brands fa-css3-alt",      label: "css3" },
+        ];
+
+        const tyl_grid = document.getElementById("tyl_gridFa");
+        const tyl_tooltip = document.getElementById("tyl_tooltip");
+
+        tyl_faIcons.forEach(item => {
+            const tyl_card = document.createElement("div");
+            tyl_card.className = "tyl_card";
+
+            // 判断 variant 用于配色
+            const variant = item.cls.includes("fa-brands") ? "brands"
+                          : item.cls.includes("fa-regular") ? "regular"
+                          : "solid";
+            tyl_card.dataset.variant = variant;
+
+            tyl_card.innerHTML = `
+                <div class="tyl_icon-area"><i class="${item.cls}"></i></div>
+                <div class="tyl_icon-label">${item.label}</div>
+            `;
+
+            // 点击复制 class
+            tyl_card.addEventListener("click", () => {
+                navigator.clipboard.writeText(item.cls).then(() => {
+                    tyl_tooltip.style.opacity = 1;
+                    setTimeout(() => { tyl_tooltip.style.opacity = 0; }, 1200);
+                });
+            });
+
+            tyl_grid.appendChild(tyl_card);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IconFont 2 — Lucide SVG 图标</title>
+
+    <style>
+        /* ========== TYL 规则：所有类名 tyl_ 开头 ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+            background-color: #F0FFF0;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航栏 */
+        .tyl_navbar {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            background-color: #27AE60;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .tyl_navbar h1 {
+            flex: 1;
+            font-size: 20px;
+        }
+        .tyl_navbar .tyl_logo {
+            font-weight: bold;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* 首页回退按钮 */
+        .tyl_home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background-color: #fff;
+            color: #27AE60;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            transition: transform 0.15s;
+        }
+        .tyl_home-btn:hover {
+            transform: translateY(-2px);
+            background-color: #e8f8ee;
+        }
+        .tyl_home-btn img {
+            width: 14px; height: 14px;
+        }
+
+        /* 页面说明 */
+        .tyl_intro {
+            max-width: 900px;
+            margin: 24px auto 0;
+            padding: 16px 24px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            line-height: 1.8;
+            color: #555;
+        }
+        .tyl_intro code {
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        .tyl_intro .tyl_section-title {
+            display: inline-block;
+            margin: 16px 0 8px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid #27AE60;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* 图标展示网格 */
+        .tyl_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+            max-width: 900px;
+            margin: 12px auto 40px;
+            padding: 0 24px;
+        }
+        .tyl_card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .tyl_card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            border-color: #27AE60;
+            background-color: #f9fef9;
+        }
+        .tyl_icon-area img {
+            width: 48px;
+            height: 48px;
+            stroke: #27AE60; /* SVG 的 stroke 颜色通过 currentColor 或直接改属性 */
+            color: #27AE60;
+            margin-bottom: 8px;
+        }
+        .tyl_icon-label {
+            font-size: 12px;
+            color: #888;
+            font-family: "Consolas", monospace;
+        }
+
+        /* 尺寸变体 */
+        .tyl_card[data-size="sm"] .tyl_icon-area img { width: 24px; height: 24px; }
+        .tyl_card[data-size="lg"] .tyl_icon-area img { width: 64px; height: 64px; }
+
+        /* 颜色变体 */
+        .tyl_card[data-color="blue"]  .tyl_icon-area img { filter: invert(40%) sepia(90%) saturate(300%) hue-rotate(180deg); }
+        .tyl_card[data-color="red"]   .tyl_icon-area img { filter: invert(40%) sepia(90%) saturate(300%) hue-rotate(330deg); }
+        .tyl_card[data-color="gold"]  .tyl_icon-area img { filter: invert(40%) sepia(90%) saturate(300%) hue-rotate(45deg); }
+        .tyl_card[data-color="green"] .tyl_icon-area img { filter: invert(50%) sepia(80%) saturate(300%) hue-rotate(80deg); }
+
+        /* Inline SVG 展示区 */
+        .tyl_inline-demo {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            padding: 16px;
+            background-color: #fff;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+        .tyl_inline-demo .tyl_demo-icon {
+            width: 48px; height: 48px;
+            color: #27AE60;
+        }
+        .tyl_inline-demo pre {
+            flex: 1;
+            background-color: #f6f8fa;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #444;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        /* 复制提示 */
+        .tyl_tooltip {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background-color: #333; color: #fff; padding: 10px 20px; border-radius: 20px;
+            font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部导航栏 + 首页回退按钮 -->
+    <nav class="tyl_navbar">
+        <h1><span class="tyl_logo">✦ Lucide</span> SVG 图标展示</h1>
+        <a class="tyl_home-btn" href="index.html">
+            <!-- 内联 SVG 方式的返回首页图标（演示 inline 用法） -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            返回首页
+        </a>
+    </nav>
+
+    <!-- 页面说明 -->
+    <section class="tyl_intro">
+        <p>
+            本页演示 <strong>Lucide 1.21.0</strong> 的 <strong>SVG 图标</strong>用法（Lucide 本身不提供字体方式，只能用 SVG）。
+        </p>
+        <p>
+            本地 <code>cdn/lucide/</code> 目录下已下载 8 个常用 SVG 文件，点击卡片可复制对应的
+            <code>&lt;img&gt;</code> 引用路径。
+        </p>
+        <p>
+            所有 SVG 文件本身是 <code>fill="none" stroke="currentColor"</code> 的线性描边风格——
+            通过 CSS 的 <code>filter: invert(...) sepia(...) hue-rotate(...)</code> 可以快速上色。
+        </p>
+
+        <span class="tyl_section-title">用法 ①：img 引用本地 SVG</span>
+        <div class="tyl_inline-demo">
+            <img src="cdn/lucide/home.svg" width="48" height="48" alt="home icon"
+                 style="color:#27AE60">
+<pre>&lt;img src="cdn/lucide/home.svg" width="48" height="48" alt="home icon"&gt;</pre>
+        </div>
+
+        <span class="tyl_section-title">用法 ②：Inline SVG 直接嵌入 HTML</span>
+        <div class="tyl_inline-demo">
+            <!-- 这是把 home.svg 的内容直接写进 HTML -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="tyl_demo-icon" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+<pre>&lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2"
+     stroke-linecap="round" stroke-linejoin="round"&gt;
+  &lt;path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/&gt;
+  &lt;polyline points="9 22 9 12 15 12 15 22"/&gt;
+&lt;/svg&gt;</pre>
+        </div>
+    </section>
+
+    <!-- 图标网格：img 引用本地 SVG -->
+    <section class="tyl_grid" id="tyl_gridLucide">
+        <!-- 由 JS 动态填充 -->
+    </section>
+
+    <!-- 复制提示 -->
+    <div id="tyl_tooltip" class="tyl_tooltip">已复制引用路径!</div>
+
+    <script>
+        /* ========== TYL 规则：变量名 tyl_ 开头 ========== */
+        const tyl_lucideIcons = [
+            { name: "home",     label: "home"     },
+            { name: "heart",    label: "heart"    },
+            { name: "star",     label: "star"     },
+            { name: "user",     label: "user"     },
+            { name: "search",   label: "search"   },
+            { name: "bell",     label: "bell"     },
+            { name: "mail",     label: "mail"     },
+            { name: "settings", label: "settings" },
+        ];
+
+        // 颜色变体
+        const tyl_colors = ["", "green", "blue", "red", "gold"];
+        // 尺寸变体
+        const tyl_sizes  = ["md", "sm", "lg"];
+
+        const tyl_grid = document.getElementById("tyl_gridLucide");
+        const tyl_tooltip = document.getElementById("tyl_tooltip");
+
+        let tyl_idx = 0;
+        tyl_lucideIcons.forEach(icon => {
+            const tyl_card = document.createElement("div");
+            tyl_card.className = "tyl_card";
+
+            // 轮换颜色和尺寸，展示多样性
+            const color = tyl_colors[tyl_idx % tyl_colors.length];
+            const size  = tyl_sizes[tyl_idx % tyl_sizes.length];
+            if (color) tyl_card.dataset.color = color;
+            if (size !== "md") tyl_card.dataset.size = size;
+
+            const src = `cdn/lucide/${icon.name}.svg`;
+            tyl_card.innerHTML = `
+                <div class="tyl_icon-area">
+                    <img src="${src}" alt="${icon.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                    <span style="display:none;color:#aaa;font-size:12px;">(SVG 缺失)</span>
+                </div>
+                <div class="tyl_icon-label">${icon.label}</div>
+            `;
+
+            // 点击复制 img 标签
+            tyl_card.addEventListener("click", () => {
+                const tag = `<img src="${src}" alt="${icon.name}">`;
+                navigator.clipboard.writeText(tag).then(() => {
+                    tyl_tooltip.textContent = `已复制: ${tag}`;
+                    tyl_tooltip.style.opacity = 1;
+                    setTimeout(() => { tyl_tooltip.style.opacity = 0; }, 1800);
+                });
+            });
+
+            tyl_grid.appendChild(tyl_card);
+            tyl_idx++;
+        });
+    </script>
+
+</body>
+</html>
