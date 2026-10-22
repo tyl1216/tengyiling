@@ -3,224 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IconFont 1 — Font Awesome 字体图标</title>
+    <title>Font Awesome · Icon Library</title>
 
     <!-- Font Awesome 本地 CSS -->
     <link rel="stylesheet" href="cdn/fontawesome/css/all.min.css">
 
+    <!-- 字体：Playfair Display 衬线标题 + JetBrains Mono 等宽 label -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
-        /* ========== TYL 规则：所有类名 tyl_ 开头 ========== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-            background-color: #FFF8DC;
-            min-height: 100vh;
+        /* ========== Design Tokens ========== */
+        :root {
+            --tyl-bg:        #0E1525;   /* 深夜蓝黑 */
+            --tyl-surface:   #1A2340;   /* 面板 */
+            --tyl-surface2:  #222C4E;   /* hover 面板 */
+            --tyl-accent:    #F5C542;   /* 金黄 */
+            --tyl-accent-dim:#B89A30;   /* 金灰 */
+            --tyl-text:      #E8E0D0;   /* 暖白正文 */
+            --tyl-muted:     #6B7A94;   /* 雾蓝灰辅助 */
+            --tyl-border:    #2A3350;   /* 暗边线 */
         }
 
-        /* 顶部导航栏 */
+        /* ========== Reset ========== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: "JetBrains Mono", "Microsoft YaHei", sans-serif;
+            background-color: var(--tyl-bg);
+            color: var(--tyl-text);
+            min-height: 100vh;
+            line-height: 1.6;
+            /* 背景微妙纹理 */
+            background-image:
+                radial-gradient(circle at 20% 0%, rgba(245,197,66,0.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 100%, rgba(107,122,148,0.08) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+
+        /* ========== Navbar ========== */
         .tyl_navbar {
             display: flex;
             align-items: center;
-            padding: 12px 24px;
-            background-color: #2E86AB;
-            color: white;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 18px 48px;
+            border-bottom: 1px solid var(--tyl-border);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            background: rgba(14,21,37,0.85);
+            z-index: 100;
         }
-        .tyl_navbar h1 {
-            flex: 1;
-            font-size: 20px;
+        .tyl_navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: "Playfair Display", serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--tyl-accent);
+            letter-spacing: 0.5px;
+        }
+        .tyl_navbar-brand i { font-size: 20px; }
+        .tyl_navbar-brand small {
+            font-family: "JetBrains Mono", monospace;
+            font-weight: 400;
+            font-size: 11px;
+            color: var(--tyl-muted);
+            letter-spacing: 2px;
+            margin-left: 4px;
+        }
+        .tyl_navbar-spacer { flex: 1; }
+        .tyl_navbar-count {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            color: var(--tyl-muted);
+            margin-right: 24px;
+            padding: 6px 14px;
+            border: 1px solid var(--tyl-border);
+            border-radius: 4px;
         }
 
-        /* 首页回退按钮（TYL 规则新建 HTML 必须有） */
+        /* 首页回退按钮——克制的文字链接，不是胶囊按钮 */
         .tyl_home-btn {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            background-color: #fff;
-            color: #2E86AB;
+            gap: 8px;
+            padding: 8px 20px;
+            background: transparent;
+            color: var(--tyl-accent);
             text-decoration: none;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            transition: transform 0.15s;
+            border: 1px solid var(--tyl-accent-dim);
+            border-radius: 4px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
         }
         .tyl_home-btn:hover {
-            transform: translateY(-2px);
-            background-color: #e8f4fb;
+            background-color: var(--tyl-accent);
+            color: var(--tyl-bg);
+            border-color: var(--tyl-accent);
         }
 
-        /* 页面说明 */
-        .tyl_intro {
-            max-width: 900px;
-            margin: 24px auto 0;
-            padding: 16px 24px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            line-height: 1.8;
-            color: #555;
+        /* ========== Hero ========== */
+        .tyl_hero {
+            padding: 72px 48px 56px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 64px;
+            align-items: center;
         }
-        .tyl_intro code {
-            background-color: #f0f0f0;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 13px;
+        .tyl_hero-text h1 {
+            font-family: "Playfair Display", serif;
+            font-weight: 900;
+            font-size: 72px;
+            line-height: 1;
+            letter-spacing: -1px;
+            color: var(--tyl-text);
+            margin-bottom: 20px;
+        }
+        .tyl_hero-text h1 span {
+            color: var(--tyl-accent);
+            font-style: italic;
+            font-weight: 700;
+        }
+        .tyl_hero-text p {
+            font-size: 14px;
+            color: var(--tyl-muted);
+            max-width: 440px;
+            line-height: 1.9;
+        }
+        .tyl_hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 320px;
+        }
+        /* 大 FA 图标作为 Hero 主体 */
+        .tyl_hero-icon {
+            font-size: 200px;
+            color: var(--tyl-accent);
+            opacity: 0.9;
+            filter: drop-shadow(0 0 60px rgba(245,197,66,0.15));
+            animation: tyl_pulse 4s ease-in-out infinite;
+        }
+        @keyframes tyl_pulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.04); opacity: 1; }
+        }
+        /* Hero 角落小装饰 */
+        .tyl_hero-deco {
+            position: absolute;
+            font-size: 28px;
+            color: var(--tyl-muted);
+            opacity: 0.4;
+        }
+        .tyl_hero-deco:nth-child(2) { top: 0;    left: 10%;  }
+        .tyl_hero-deco:nth-child(3) { top: 20%;  right: 5%;  font-size: 36px; }
+        .tyl_hero-deco:nth-child(4) { bottom: 10%; left: 5%;  font-size: 22px; }
+        .tyl_hero-deco:nth-child(5) { bottom: 0;   right: 15%; font-size: 30px; }
+
+        /* ========== Section Label ========== */
+        .tyl_section-label {
+            max-width: 1200px;
+            margin: 0 auto 24px;
+            padding: 0 48px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            color: var(--tyl-muted);
+            letter-spacing: 3px;
+        }
+        .tyl_section-label::before {
+            content: "";
+            width: 40px;
+            height: 1px;
+            background-color: var(--tyl-border);
+        }
+        .tyl_section-label::after {
+            content: "SOLID / REGULAR / BRANDS";
+            margin-left: auto;
+            font-size: 10px;
+            opacity: 0.6;
         }
 
-        /* 图标展示网格 */
+        /* ========== Grid ========== */
         .tyl_grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 16px;
-            max-width: 900px;
-            margin: 24px auto 40px;
-            padding: 0 24px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto 80px;
+            padding: 0 48px;
         }
         .tyl_card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px 12px;
+            background-color: var(--tyl-surface);
+            padding: 28px 8px 20px;
             text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
             cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            /* 细边线而不是圆角卡片感 */
+            border: 1px solid transparent;
         }
         .tyl_card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+            background-color: var(--tyl-surface2);
+            border-color: var(--tyl-accent-dim);
         }
+        .tyl_card:hover .tyl_icon-area {
+            color: var(--tyl-accent);
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 12px rgba(245,197,66,0.3));
+        }
+        .tyl_card:hover .tyl_icon-label {
+            color: var(--tyl-text);
+        }
+        .tyl_card:hover::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tyl-accent), transparent);
+        }
+        .tyl_card-variant {
+            position: absolute;
+            top: 6px;
+            right: 8px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 9px;
+            letter-spacing: 1px;
+            padding: 2px 6px;
+            border-radius: 2px;
+        }
+        .tyl_card-variant.solid   { color: #8EA3C4; border: 1px solid #2A3B5C; }
+        .tyl_card-variant.regular { color: #9A8EA3; border: 1px solid #3B2A5C; }
+        .tyl_card-variant.brands  { color: var(--tyl-accent-dim); border: 1px solid #5C4B1A; }
+
         .tyl_icon-area {
-            font-size: 36px;
-            color: #2E86AB;
-            margin-bottom: 8px;
+            font-size: 34px;
+            color: var(--tyl-muted);
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+            display: block;
         }
         .tyl_icon-label {
-            font-size: 12px;
-            color: #888;
-            font-family: "Consolas", monospace;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            color: var(--tyl-muted);
+            transition: color 0.25s ease;
         }
 
-        /* 不同颜色变体 */
-        .tyl_card[data-variant="solid"] .tyl_icon-area     { color: #2E86AB; }
-        .tyl_card[data-variant="regular"] .tyl_icon-area   { color: #27AE60; }
-        .tyl_card[data-variant="brands"] .tyl_icon-area    { color: #E67E22; }
-        .tyl_card[data-variant="duo"] .tyl_icon-area i:nth-child(2) { margin-left: 6px; color: #E74C3C; }
+        /* ========== Tooltip ========== */
+        .tyl_tooltip {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--tyl-surface2);
+            color: var(--tyl-accent);
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 12px;
+            border: 1px solid var(--tyl-accent-dim);
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none;
+            z-index: 999;
+            letter-spacing: 1px;
+        }
+        .tyl_tooltip.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
 
-        /* 不同尺寸 */
-        .tyl_card[data-size="sm"] .tyl_icon-area { font-size: 20px; }
-        .tyl_card[data-size="md"] .tyl_icon-area { font-size: 36px; }
-        .tyl_card[data-size="lg"] .tyl_icon-area { font-size: 52px; }
+        /* ========== Responsive ========== */
+        @media (max-width: 768px) {
+            .tyl_navbar   { padding: 14px 20px; }
+            .tyl_hero     { grid-template-columns: 1fr; padding: 40px 24px; gap: 32px; }
+            .tyl_hero-text h1 { font-size: 48px; }
+            .tyl_hero-icon   { font-size: 140px; }
+            .tyl_section-label, .tyl_grid { padding: 0 24px; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 顶部导航栏 + 首页回退按钮 -->
+    <!-- Navbar -->
     <nav class="tyl_navbar">
-        <h1><i class="fa-solid fa-icons"></i> Font Awesome 字体图标展示</h1>
+        <div class="tyl_navbar-brand">
+            <i class="fa-solid fa-icons"></i>
+            Font Awesome
+            <small>6.7.2 · FREE</small>
+        </div>
+        <div class="tyl_navbar-spacer"></div>
+        <div class="tyl_navbar-count" id="tyl_countLabel">37 icons</div>
         <a class="tyl_home-btn" href="index.html">
-            <i class="fa-solid fa-house"></i> 返回首页
+            <i class="fa-solid fa-arrow-left"></i>
+            HOME
         </a>
     </nav>
 
-    <!-- 页面说明 -->
-    <section class="tyl_intro">
-        <p>
-            本页演示 <strong>Font Awesome 6.7.2</strong>（免费版）的<strong>字体图标</strong>用法：
-            通过 <code>&lt;i class="fa-solid fa-xxx"&gt;</code> 标签直接在 HTML 中引用。
-            CSS + WOFF2 字体文件均下载到本地 <code>cdn/fontawesome/</code> 目录，支持离线使用。
-        </p>
-        <p>
-            覆盖三种免费风格：<code>fa-solid</code>（实心）、<code>fa-regular</code>（常规）、<code>fa-brands</code>（品牌）。
-        </p>
+    <!-- Hero -->
+    <section class="tyl_hero">
+        <div class="tyl_hero-text">
+            <h1>Font <span>Awesome</span></h1>
+            <p>
+                2,000+ 图标，一套字体解决实心 / 常规 / 品牌三种风格。
+                通过 <code>&lt;i class="fa-solid fa-xxx"&gt;</code> 直接引用，
+                CSS + WOFF2 已本地化到 <code>cdn/fontawesome/</code>，支持离线。
+            </p>
+        </div>
+        <div class="tyl_hero-visual">
+            <i class="fa-solid fa-star tyl_hero-icon"></i>
+            <i class="fa-solid fa-heart tyl_hero-deco"></i>
+            <i class="fa-brands fa-github tyl_hero-deco"></i>
+            <i class="fa-regular fa-bookmark tyl_hero-deco"></i>
+            <i class="fa-solid fa-camera tyl_hero-deco"></i>
+        </div>
     </section>
 
-    <!-- 图标网格 -->
-    <section class="tyl_grid" id="tyl_gridFa">
-        <!-- 由 JS 动态填充，支持 hover 复制 class -->
-    </section>
+    <!-- Section Label -->
+    <div class="tyl_section-label">CLICK A CARD TO COPY CLASS</div>
 
-    <!-- 复制提示 -->
-    <div id="tyl_tooltip" style="
-        position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-        background-color: #333; color: #fff; padding: 10px 20px; border-radius: 20px;
-        font-size: 14px; opacity: 0; transition: opacity 0.3s; pointer-events: none;
-        z-index: 999;">已复制 class!</div>
+    <!-- Grid -->
+    <section class="tyl_grid" id="tyl_gridFa"></section>
+
+    <!-- Tooltip -->
+    <div id="tyl_tooltip" class="tyl_tooltip">COPIED</div>
 
     <script>
         /* ========== TYL 规则：变量名 tyl_ 开头 ========== */
         const tyl_faIcons = [
-            // Solid 实心
-            { cls: "fa-solid fa-house",          label: "house" },
-            { cls: "fa-solid fa-heart",          label: "heart" },
-            { cls: "fa-solid fa-star",           label: "star" },
-            { cls: "fa-solid fa-user",           label: "user" },
-            { cls: "fa-solid fa-search",         label: "search" },
-            { cls: "fa-solid fa-bell",           label: "bell" },
-            { cls: "fa-solid fa-envelope",       label: "envelope" },
-            { cls: "fa-solid fa-settings",       label: "gear" },
-            { cls: "fa-solid fa-download",       label: "download" },
-            { cls: "fa-solid fa-upload",         label: "upload" },
-            { cls: "fa-solid fa-trash",          label: "trash" },
-            { cls: "fa-solid fa-edit",           label: "edit" },
-            { cls: "fa-solid fa-check",          label: "check" },
-            { cls: "fa-solid fa-xmark",          label: "xmark" },
-            { cls: "fa-solid fa-plus",           label: "plus" },
-            { cls: "fa-solid fa-minus",          label: "minus" },
-            { cls: "fa-solid fa-play",           label: "play" },
-            { cls: "fa-solid fa-pause",          label: "pause" },
-            { cls: "fa-solid fa-music",          label: "music" },
-            { cls: "fa-solid fa-camera",          label: "camera" },
-            { cls: "fa-solid fa-image",          label: "image" },
-            { cls: "fa-solid fa-file",           label: "file" },
-            { cls: "fa-solid fa-folder",         label: "folder" },
-            { cls: "fa-solid fa-lock",           label: "lock" },
+            // Solid
+            { cls: "fa-solid fa-house",          label: "house",          v: "solid" },
+            { cls: "fa-solid fa-heart",          label: "heart",          v: "solid" },
+            { cls: "fa-solid fa-star",           label: "star",           v: "solid" },
+            { cls: "fa-solid fa-user",           label: "user",           v: "solid" },
+            { cls: "fa-solid fa-search",         label: "search",         v: "solid" },
+            { cls: "fa-solid fa-bell",           label: "bell",           v: "solid" },
+            { cls: "fa-solid fa-envelope",       label: "envelope",       v: "solid" },
+            { cls: "fa-solid fa-gear",           label: "gear",           v: "solid" },
+            { cls: "fa-solid fa-download",       label: "download",       v: "solid" },
+            { cls: "fa-solid fa-upload",         label: "upload",         v: "solid" },
+            { cls: "fa-solid fa-trash",          label: "trash",          v: "solid" },
+            { cls: "fa-solid fa-pen",            label: "pen",            v: "solid" },
+            { cls: "fa-solid fa-check",          label: "check",          v: "solid" },
+            { cls: "fa-solid fa-xmark",          label: "xmark",          v: "solid" },
+            { cls: "fa-solid fa-plus",           label: "plus",           v: "solid" },
+            { cls: "fa-solid fa-minus",          label: "minus",          v: "solid" },
+            { cls: "fa-solid fa-play",           label: "play",           v: "solid" },
+            { cls: "fa-solid fa-music",          label: "music",          v: "solid" },
+            { cls: "fa-solid fa-camera",          label: "camera",          v: "solid" },
+            { cls: "fa-solid fa-image",          label: "image",          v: "solid" },
+            { cls: "fa-solid fa-file",           label: "file",           v: "solid" },
+            { cls: "fa-solid fa-folder",         label: "folder",         v: "solid" },
+            { cls: "fa-solid fa-lock",           label: "lock",           v: "solid" },
+            { cls: "fa-solid fa-globe",          label: "globe",          v: "solid" },
 
-            // Regular 常规
-            { cls: "fa-regular fa-heart",        label: "heart (regular)" },
-            { cls: "fa-regular fa-star",         label: "star (regular)" },
-            { cls: "fa-regular fa-bookmark",     label: "bookmark (regular)" },
-            { cls: "fa-regular fa-folder-open",  label: "folder-open" },
-            { cls: "fa-regular fa-user",         label: "user (regular)" },
+            // Regular
+            { cls: "fa-regular fa-heart",         label: "heart",         v: "regular" },
+            { cls: "fa-regular fa-star",          label: "star",          v: "regular" },
+            { cls: "fa-regular fa-bookmark",      label: "bookmark",      v: "regular" },
+            { cls: "fa-regular fa-folder-open",   label: "folder-open",   v: "regular" },
+            { cls: "fa-regular fa-user",          label: "user",          v: "regular" },
+            { cls: "fa-regular fa-file",          label: "file",          v: "regular" },
 
-            // Brands 品牌
-            { cls: "fa-brands fa-github",        label: "github" },
-            { cls: "fa-brands fa-twitter",       label: "twitter" },
-            { cls: "fa-brands fa-weixin",        label: "weixin" },
-            { cls: "fa-brands fa-weibo",         label: "weibo" },
-            { cls: "fa-brands fa-js",            label: "javascript" },
-            { cls: "fa-brands fa-vuejs",         label: "vue.js" },
-            { cls: "fa-brands fa-react",          label: "react" },
-            { cls: "fa-brands fa-html5",         label: "html5" },
-            { cls: "fa-brands fa-css3-alt",      label: "css3" },
+            // Brands
+            { cls: "fa-brands fa-github",         label: "github",        v: "brands" },
+            { cls: "fa-brands fa-x-twitter",      label: "x-twitter",     v: "brands" },
+            { cls: "fa-brands fa-weixin",         label: "weixin",        v: "brands" },
+            { cls: "fa-brands fa-weibo",          label: "weibo",         v: "brands" },
+            { cls: "fa-brands fa-js",             label: "javascript",    v: "brands" },
+            { cls: "fa-brands fa-vuejs",          label: "vue.js",        v: "brands" },
+            { cls: "fa-brands fa-react",           label: "react",         v: "brands" },
+            { cls: "fa-brands fa-html5",          label: "html5",         v: "brands" },
+            { cls: "fa-brands fa-css3-alt",       label: "css3",          v: "brands" },
         ];
 
         const tyl_grid = document.getElementById("tyl_gridFa");
         const tyl_tooltip = document.getElementById("tyl_tooltip");
+        const tyl_countLabel = document.getElementById("tyl_countLabel");
+        tyl_countLabel.textContent = `${tyl_faIcons.length} icons`;
 
         tyl_faIcons.forEach(item => {
             const tyl_card = document.createElement("div");
             tyl_card.className = "tyl_card";
-
-            // 判断 variant 用于配色
-            const variant = item.cls.includes("fa-brands") ? "brands"
-                          : item.cls.includes("fa-regular") ? "regular"
-                          : "solid";
-            tyl_card.dataset.variant = variant;
-
             tyl_card.innerHTML = `
-                <div class="tyl_icon-area"><i class="${item.cls}"></i></div>
-                <div class="tyl_icon-label">${item.label}</div>
+                <span class="tyl_card-variant ${item.v}">${item.v.toUpperCase()}</span>
+                <span class="tyl_icon-area"><i class="${item.cls}"></i></span>
+                <span class="tyl_icon-label">${item.label}</span>
             `;
-
-            // 点击复制 class
             tyl_card.addEventListener("click", () => {
                 navigator.clipboard.writeText(item.cls).then(() => {
-                    tyl_tooltip.style.opacity = 1;
-                    setTimeout(() => { tyl_tooltip.style.opacity = 0; }, 1200);
+                    tyl_tooltip.textContent = `COPIED  ${item.cls}`;
+                    tyl_tooltip.classList.add("show");
+                    setTimeout(() => tyl_tooltip.classList.remove("show"), 1400);
                 });
             });
-
             tyl_grid.appendChild(tyl_card);
         });
     </script>
