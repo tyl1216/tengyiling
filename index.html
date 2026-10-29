@@ -1,33 +1,281 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>网页抓小球</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>抓小球小游戏</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%234285F4'/></svg>">
+<!-- 作者：滕依灵  学号：24001010330  班级：24003班 -->
+<style>
+  /* ===== 基础重置 ===== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    /* 整体浅黄色背景，铺满整个视口，无滚动条 */
+    background: #FFFBDC;
+    font-family: "黑体", "PingFang SC", "Microsoft YaHei", sans-serif;
+    overflow: hidden;               /* 锁定视口，禁止滚动 */
+    -webkit-user-select: none;      /* 禁止文字选中，防止干扰点击 */
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  /* ===== 顶部信息栏 ===== */
+  .topbar {
+    position: fixed;                 /* 固定顶部 */
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: rgba(255, 255, 255, 0.85);  /* 半透明白色，不遮挡小球 */
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+    z-index: 50;
+    font-size: 22px;
+    font-weight: 700;
+    color: #333;
+  }
+  .topbar .score  { color: #E0642C; }   /* 分数用暖橙突出 */
+  .topbar .timer  { color: #1B6EC2; }   /* 倒计时用蓝色，与小球呼应 */
+
+  /* ===== 游戏区域 ===== */
+  #gameArea {
+    position: fixed;                 /* 覆盖整个视口 */
+    inset: 0;
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  /* ===== 蓝色圆形小球 ===== */
+  #ball {
+    position: absolute;
+    width: 60px;                     /* 固定直径 60px */
+    height: 60px;
+    border-radius: 50%;              /* 正圆形 */
+    background: #4285F4;             /* 纯色蓝 */
+    box-shadow: 0 4px 10px rgba(66, 133, 244, 0.45);  /* 柔和阴影 */
+    transition: transform 0.12s ease; /* 点击缩放消失动画 */
+    cursor: pointer;
+  }
+  #ball.caught { transform: scale(0); }
+
+  /* ===== 开始按钮 ===== */
+  #startBtn {
+    position: fixed;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 16px 44px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    background: #4285F4;
+    border: none;
+    border-radius: 40px;
+    box-shadow: 0 6px 16px rgba(66, 133, 244, 0.4);
+    cursor: pointer;
+    z-index: 60;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  #startBtn:hover  { transform: translate(-50%, -50%) scale(1.06); background: #357AE8; }
+  #startBtn:active { transform: translate(-50%, -50%) scale(0.97); }
+  #startBtn.hidden { display: none; }
+
+  /* ===== 游戏结束遮罩 ===== */
+  #overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 251, 220, 0.85);
+    z-index: 70;
+  }
+  #overlay.show { display: flex; }
+
+  .overlay-card {
+    text-align: center;
+    background: #fff;
+    padding: 40px 56px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  }
+  .overlay-card h2 { font-size: 30px; color: #333; margin-bottom: 14px; }
+  .overlay-card p  { font-size: 22px; color: #E0642C; font-weight: 700; margin-bottom: 26px; }
+
+  #againBtn {
+    padding: 14px 40px;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    background: #4285F4;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  #againBtn:hover  { transform: scale(1.06); background: #357AE8; }
+  #againBtn:active { transform: scale(0.97); }
+</style>
 </head>
 <body>
-    <!-- 顶部 UI 栏：分数 + 倒计时 + 开始按钮 -->
-    <header class="top-bar">
-        <div class="score-display">分数：<span id="score">0</span></div>
-        <div class="timer-display" id="timer">02:00</div>
-        <button class="start-btn" id="startBtn">开始</button>
-    </header>
 
-    <!-- 游戏区域 -->
-    <main class="game-area" id="gameArea">
-        <!-- 小球容器（由 JS 动态创建，T1 阶段为空） -->
-    </main>
+  <!-- 顶部信息栏：左侧分数，右侧倒计时 -->
+  <header class="topbar" id="topbar">
+    <div class="score">分数：<span id="scoreText">0</span></div>
+    <div class="timer">剩余时间：<span id="timerText">02:00</span></div>
+  </header>
 
-    <!-- 结束蒙层（T1 阶段静态隐藏） -->
-    <div class="overlay hidden" id="overlay">
-        <div class="overlay-content">
-            <h1>游戏结束</h1>
-            <p class="final-score">最终得分：<span id="finalScore">0</span></p>
-            <button class="restart-btn" id="restartBtn">再来一局</button>
-        </div>
+  <!-- 游戏区域（小球生成于此） -->
+  <main id="gameArea">
+    <div id="ball" class="ball" aria-hidden="true"></div>
+  </main>
+
+  <!-- 开始按钮 -->
+  <button id="startBtn" type="button">开始游戏</button>
+
+  <!-- 游戏结束遮罩 -->
+  <div id="overlay" role="dialog" aria-label="游戏结束">
+    <div class="overlay-card">
+      <h2>游戏结束！</h2>
+      <p>你的最终得分：<span id="finalScore">0</span> 分</p>
+      <button id="againBtn" type="button">再来一局</button>
     </div>
+  </div>
 
-    <script src="script.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ===== 常量与状态 ===== */
+  var BALL_SIZE   = 60;               // 小球直径 px
+  var TOPBAR_H    = 56;               // 顶部信息栏高度 px
+  var TOTAL_TIME  = 120;              // 总时长 2 分钟 = 120 秒
+  var HIT_SCORE   = 2;                // 点中小球得分
+  var MISS_SCORE  = -1;               // 点空白扣分
+
+  var score      = 0;                 // 当前分数
+  var remainTime = TOTAL_TIME;        // 剩余秒数
+  var isPlaying  = false;             // 游戏是否进行中
+  var timer      = null;              // 倒计时定时器句柄
+
+  var elBall     = document.getElementById('ball');
+  var elArea     = document.getElementById('gameArea');
+  var elScore    = document.getElementById('scoreText');
+  var elTimer    = document.getElementById('timerText');
+  var elStart    = document.getElementById('startBtn');
+  var elOverlay  = document.getElementById('overlay');
+  var elFinal    = document.getElementById('finalScore');
+  var elAgain    = document.getElementById('againBtn');
+
+  /* ===== 工具：格式化时间为 MM:SS ===== */
+  function formatTime(sec) {
+    var m = Math.floor(sec / 60);
+    var s = sec % 60;
+    return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }
+
+  /* ===== 刷新顶部显示 ===== */
+  function render() {
+    elScore.textContent = score;
+    elTimer.textContent = formatTime(remainTime);
+  }
+
+  /* ===== 生成合法随机位置（避开顶栏、不出屏） ===== */
+  function placeBall() {
+    var maxTop  = window.innerHeight - BALL_SIZE;   // 纵向最大：顶栏之下到屏幕底
+    var maxLeft = window.innerWidth  - BALL_SIZE;   // 横向最大：左边到屏幕右
+    // 随机 top 范围：顶栏高度 ~ maxTop；left 范围：0 ~ maxLeft
+    var top  = Math.max(TOPBAR_H, Math.floor(Math.random() * (maxTop - TOPBAR_H))) + 'px';
+    var left = Math.floor(Math.random() * (maxLeft + 1)) + 'px';
+    elBall.style.top  = top;
+    elBall.style.left = left;
+    elBall.classList.remove('caught');   // 复位缩放状态
+    elBall.style.visibility = 'visible';
+  }
+
+  /* ===== 点中小球：+2 分，缩放消失后刷新新位置 ===== */
+  function onHit() {
+    if (!isPlaying) return;
+    score += HIT_SCORE;
+    render();
+    elBall.classList.add('caught');          // 触发缩放消失动画
+    setTimeout(placeBall, 130);              // 动画结束后在新位置重生
+  }
+
+  /* ===== 点击空白：-1 分，最低 0 分，小球保留 ===== */
+  function onMiss() {
+    if (!isPlaying) return;
+    score = Math.max(0, score + MISS_SCORE);  // 分数不能小于 0
+    render();
+  }
+
+  /* ===== 游戏区域点击分发：区分小球与空白 ===== */
+  elArea.addEventListener('click', function (e) {
+    if (e.target === elBall) { onHit(); } else { onMiss(); }
+  });
+
+  /* ===== 开始游戏 ===== */
+  function startGame() {
+    // 防抖：确保清掉旧定时器，避免多个定时器并发
+    if (timer) clearInterval(timer);
+
+    // 重置状态
+    score      = 0;
+    remainTime = TOTAL_TIME;
+    isPlaying  = true;
+
+    // 隐藏开始按钮、关闭结束遮罩
+    elStart.classList.add('hidden');
+    elOverlay.classList.remove('show');
+
+    render();
+    placeBall();               // 生成第一颗小球
+
+    // 倒计时，每秒刷新
+    timer = setInterval(function () {
+      remainTime -= 1;
+      render();
+      if (remainTime <= 0) { gameOver(); }
+    }, 1000);
+  }
+
+  /* ===== 游戏结束 ===== */
+  function gameOver() {
+    if (timer) { clearInterval(timer); timer = null; }
+    isPlaying = false;
+    elBall.style.visibility = 'hidden';   // 移除剩余小球
+    elFinal.textContent = score;
+    elOverlay.classList.add('show');      // 显示结束弹窗 + 再来一局
+  }
+
+  /* ===== 再来一局 ===== */
+  elAgain.addEventListener('click', function () {
+    elOverlay.classList.remove('show');
+    startGame();
+  });
+
+  /* ===== 开始按钮：仅未开始时生效 ===== */
+  elStart.addEventListener('click', function () {
+    if (!isPlaying) { startGame(); }
+  });
+
+  /* ===== 窗口尺寸变化：小球越界则自动重新生成 ===== */
+  window.addEventListener('resize', function () {
+    if (!isPlaying) return;
+    var r = elBall.getBoundingClientRect();
+    // 小球任一边缘越出可视区（含被顶栏盖住）则重放
+    if (r.left < 0 || r.right > window.innerWidth ||
+        r.top < TOPBAR_H || r.bottom > window.innerHeight) {
+      placeBall();
+    }
+  });
+
+  /* ===== 初始状态：不生成小球，界面显示默认值 ===== */
+  render();
+})();
+</script>
 </body>
 </html>
