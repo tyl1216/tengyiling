@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>学生成绩分析面板 · 等级一（起始模板）</title>
 <style>
-  /* 样式与 target.html 保持一致，方便一比一对照还原 */
+  /* 样式变量：统一管理颜色、圆角、阴影等主题参数，方便全局修改 */
   :root{
     --bg-1:#1a1c2c; --bg-2:#243b55;
     --card:#ffffff; --card-soft:rgba(255,255,255,.92);
@@ -15,35 +15,47 @@
     --radius:14px; --shadow:0 10px 30px rgba(20,28,48,.18);
     --shadow-sm:0 4px 14px rgba(20,28,48,.12);
   }
+  /* 全局盒模型重置，清除默认内外边距 */
   *{box-sizing:border-box;margin:0;padding:0}
+  /* 页面主体：渐变背景、基础字体、最小高度、内边距 */
   body{font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
     background:linear-gradient(135deg,var(--bg-1),var(--bg-2));min-height:100vh;color:var(--ink);line-height:1.6;padding:24px}
+  /* 内容容器：限制最大宽度，实现页面居中 */
   .wrap{max-width:1180px;margin:0 auto}
+  /* 头部标题栏样式：弹性布局、圆角、阴影、自动换行 */
   header.head{background:var(--card-soft);border-radius:var(--radius);padding:22px 26px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:18px}
   .head h1{font-size:22px;display:flex;align-items:center;gap:10px}
   .head h1 .logo{width:38px;height:38px;border-radius:11px;flex:none;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;color:#fff;font-weight:700}
   .head .sub{color:var(--ink-soft);font-size:13px}
+  /* 等级标签样式 */
   .tag-level{font-size:12px;font-weight:700;color:#fff;background:var(--primary);padding:4px 10px;border-radius:20px}
+  /* 功能区块容器：白色卡片、圆角、阴影、下边距 */
   section.block{background:var(--card);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow-sm);margin-bottom:18px}
+  /* 区块标题样式，左侧带蓝色竖线标识 */
   .block-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:16px;color:var(--ink)}
   .block-title::before{content:"";width:4px;height:16px;border-radius:3px;background:var(--primary)}
   .block-title .hint{font-weight:400;color:var(--ink-soft);font-size:12px}
+  /* 统计卡片网格：4列等宽布局 */
   .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
   .stat-card{background:linear-gradient(135deg,#f6f8ff,#fff);border:1px solid var(--line);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden}
   .stat-card .stat-value{font-size:30px;font-weight:800;color:var(--primary);line-height:1.2}
   .stat-card .stat-label{font-size:13px;color:var(--ink-soft);margin-top:4px}
   .stat-card .stat-unit{font-size:14px;color:var(--ink-soft);font-weight:600;margin-left:3px}
+  /* 不同类型统计卡片文字颜色 */
   .stat-card.accent .stat-value{color:var(--accent)}
   .stat-card.warn .stat-value{color:var(--warn)}
   .stat-card.gold .stat-value{color:var(--gold)}
+  /* 控制区：搜索框+排序按钮，弹性自动换行 */
   .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
   .search-box{position:relative;flex:1;min-width:220px}
   .search-box input{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none;transition:border-color .2s}
   .search-box input:focus{border-color:var(--primary)}
   .search-box .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft)}
+  /* 排序按钮组样式，激活按钮高亮 */
   .btn-group{display:flex;gap:6px;background:#eef1f7;padding:4px;border-radius:10px}
   .btn-group button{border:none;background:transparent;padding:8px 14px;border-radius:7px;font-size:13px;color:var(--ink-soft);cursor:pointer;transition:all .18s}
   .btn-group button.active{background:#fff;color:var(--primary);font-weight:700;box-shadow:var(--shadow-sm)}
+  /* 不及格预警榜单布局 */
   .rank-grid{display:grid;grid-template-columns:1fr;gap:14px}
   .rank-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
   .rank-card h4{font-size:13px;color:var(--ink-soft);margin-bottom:10px;display:flex;align-items:center;gap:6px}
@@ -55,7 +67,9 @@
   .rank-row .rk{background:#fde9dd;color:#c0602a}
   .rank-row .nm{flex:1;margin:0 8px;font-weight:600}
   .rank-row .vl{font-weight:700;color:var(--warn)}
+  /* 空数据提示样式 */
   .empty{color:var(--ink-soft);font-size:13px;font-style:italic;text-align:center;padding:10px 0}
+  /* 学生卡片网格：自动填充，最小宽度320px */
   .student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
   .student-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff;transition:transform .18s,box-shadow .18s;cursor:pointer}
   .student-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm)}
@@ -77,7 +91,7 @@
   .student-card .ft .total{font-weight:800;color:var(--primary)}
   .student-card .ft .avg{color:var(--ink-soft)}
   footer.foot{text-align:center;color:rgba(255,255,255,.7);font-size:12px;padding:14px 0}
-  /* 等级一提示框 */
+  /* 等级任务提示框 */
   .task-note{background:#fff8e6;border:1px solid #f3e0a8;color:#7a5d10;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:18px}
   .task-note b{color:#5a4700}
 </style>
@@ -93,6 +107,7 @@
     对照 target.html 的渲染效果边问边写。
   </div>
 
+  <!-- 页面头部：标题、等级标签 -->
   <header class="head">
     <h1><span class="logo">分</span>学生成绩分析面板</h1>
     <div>
@@ -101,7 +116,7 @@
     </div>
   </header>
 
-  <!-- 区域1：统计卡片 -->
+  <!-- 区域1：统计卡片容器，用来放班级概览数据 -->
   <section class="block">
     <div class="block-title">班级概览 <span class="hint">getElementById / reduce / filter</span></div>
     <div class="stat-grid">
@@ -112,7 +127,7 @@
     </div>
   </section>
 
-  <!-- 区域2：控制区（搜索 + 排序）-->
+  <!-- 区域2：控制区容器，搜索框、排序按钮 -->
   <section class="block">
     <div class="block-title">数据操作 <span class="hint">filter / sort / querySelectorAll / classList / 事件委托</span></div>
     <div class="controls">
@@ -127,7 +142,7 @@
     </div>
   </section>
 
-  <!-- 区域3：不及格预警（榜单区简化）-->
+  <!-- 区域3：不及格预警榜单容器 -->
   <section class="block">
     <div class="block-title">不及格预警 <span class="hint">filter / sort / forEach</span></div>
     <div class="rank-grid">
@@ -138,15 +153,17 @@
     </div>
   </section>
 
-  <!-- 区域4：学生卡片列表 -->
+  <!-- 区域4：学生卡片列表容器，动态生成学生卡片 -->
   <section class="block">
     <div class="block-title">学生成绩卡片 <span class="hint">forEach / createElement / classList</span></div>
     <div class="student-grid" id="studentList"></div>
   </section>
 
+  <!-- 页脚文字 -->
   <footer class="foot">高级网页设计课堂实践任务 · 等级一（基础）· 起始模板</footer>
 </div>
 
+<!-- 外部数据文件，提供全局 STUDENTS学生数组、SUBJECTS科目数组 -->
 <script src="data.js"></script>
 <script>
 /* ============================================================
@@ -156,71 +173,75 @@
  * ============================================================ */
 (function () {
   "use strict";
+  // 接收全局数据，学生数组、科目数组
   const STUDENTS = window.STUDENTS;
   const SUBJECTS = window.SUBJECTS;
 
-  const PASS_LINE = 60;        // 及格线
-  const EXCELLENT_AVG = 85;    // 优秀线（等级一暂不使用）
+  const PASS_LINE = 60;        // 及格分数线：60分
+  const EXCELLENT_AVG = 85;    // 优秀线，等级一暂不使用
 
-  /* ---------- 工具函数 ---------- */
-  // 计算单科分数的样式类：不及格返回 "fail"，满分返回 "full"
+  /* ---------- 工具函数：供核心函数调用，辅助计算 ---------- */
+  // 根据分数返回样式类：不及格fail标红，满分full标绿，其余空
   function scoreClass(v) {
     if (v < PASS_LINE) return "fail";
     if (v >= 100) return "full";
     return "";
   }
 
-  // 计算一个学生的总分：用 reduce 把 SUBJECTS 对应的分数累加
+  // 计算单个学生总分：遍历所有科目累加分数
   function getTotal(s) {
     return SUBJECTS.reduce((sum, sub) => sum + s[sub.key], 0);
   }
 
-  // 计算一个学生的平均分：总分 / 科目数，保留一位小数
+  // 计算单个学生平均分，保留1位小数
   function getAvg(s) {
     return Math.round(getTotal(s) / SUBJECTS.length * 10) / 10;
   }
 
-  // 取一个学生不及格的科目数组：用 filter 筛选分数 < PASS_LINE
+  // 获取该学生所有不及格科目，返回科目数组
   function getFails(s) {
     return SUBJECTS.filter(sub => s[sub.key] < PASS_LINE);
   }
 
-  // 姓名首字（头像用）
+  // 获取学生姓名第一个字，用于头像展示
   function firstName(s) {
     return s.name.charAt(0);
   }
 
 
-  /* ============ 以下 5 个为本等级必做函数 ============ */
+  /* ============ 以下 5 个为本等级必做核心函数 ============ */
 
-  /* ① 渲染统计卡片 —— 考察 getElementById + reduce + filter
-   * 把 list 的人数/总分/平均分/及格率写入 4 个统计卡片
-   * 及格率 = 没有不及格科目的学生人数 ÷ 总人数 × 100（取整）
-   */
+  /* ① renderStats：渲染顶部统计卡片
+  入参list：经过搜索、排序过滤后的学生数组
+  功能：计算人数、班级总分、全体平均分、无挂科学生及格率，写入DOM
+  及格规则：没有任何一科不及格才算及格，不是平均分及格
+  */
   function renderStats(list) {
     const count = list.length;
-    // 所有学生所有科目分数总和
+    // 双层reduce：累加所有学生所有科目分数，得到班级总分
     const totalScore = list.reduce((sum, stu) => {
       return sum + SUBJECTS.reduce((s, sub) => s + stu[sub.key], 0);
     }, 0);
+    // 所有试卷平均分：总分数 ÷（人数 × 科目数量）
     const avgScore = Math.round(totalScore / (count * SUBJECTS.length) * 10) / 10;
-    // 没有任何一科不及格的学生
+    // 筛选没有任何不及格科目的学生
     const passCount = list.filter(s => getFails(s).length === 0).length;
+    // 及格率百分比，取整数
     const passRate = count === 0 ? 0 : Math.round(passCount / count * 100);
 
     document.getElementById("statCount").textContent = count;
     document.getElementById("statTotalScore").textContent = totalScore;
     document.getElementById("statAvgScore").textContent = avgScore;
-    // 只修改数字部分，保留后面 %
+    // 修改数字部分，保留后面%符号
     document.getElementById("statPassRate").firstChild.textContent = passRate;
   }
 
 
-  /* ② 渲染学生卡片列表 —— 考察 forEach + createElement + classList
-   * 遍历 list 生成卡片 DOM，结构参考 target.html
-   * 每张卡片含：头像+姓名+学号+排名徽章 / 五科分数网格 / 总分+均分
-   * 排名 = 在当前 list 中的序号+1
-   */
+  /* ② renderStudentCards：渲染学生成绩卡片
+  入参list：过滤排序后的学生数组
+  功能：遍历学生数组，用createElement动态生成卡片DOM，包含头像、姓名学号、排名、各科分数、总分均分
+  排名为当前列表中的序号+1，前三名徽章gold样式
+  */
   function renderStudentCards(list) {
     const container = document.getElementById("studentList");
     container.innerHTML = "";
@@ -230,7 +251,7 @@
       card.className = "student-card";
       card.setAttribute("data-id", s.id);
 
-      // 头部 hd
+      // 卡片头部：头像、姓名、学号、排名徽章
       const hd = document.createElement("div");
       hd.className = "hd";
 
@@ -257,7 +278,7 @@
       hd.appendChild(infoWrap);
       hd.appendChild(badge);
 
-      // 分数网格
+      // 各科分数网格，循环科目生成单科格子
       const scoreGrid = document.createElement("div");
       scoreGrid.className = "score-grid";
       SUBJECTS.forEach(sub => {
@@ -274,7 +295,7 @@
         scoreGrid.appendChild(item);
       })
 
-      // 底部 ft
+      // 卡片底部：总分、均分
       const ft = document.createElement("div");
       ft.className = "ft";
       const totalEl = document.createElement("div");
@@ -286,6 +307,7 @@
       ft.appendChild(totalEl);
       ft.appendChild(avgEl);
 
+      // 组装卡片放入容器
       card.appendChild(hd);
       card.appendChild(scoreGrid);
       card.appendChild(ft);
@@ -294,13 +316,17 @@
   }
 
 
-  /* ③ 渲染不及格预警 —— 考察 filter + sort + forEach
-   * 筛出有不及格科目的学生，按不及格科目数降序，写入 #failWarningList
-   */
+  /* ③ renderFailWarning：渲染不及格预警列表
+  入参list：过滤排序后的学生数组
+  功能：筛选存在不及格科目的学生，按不及格科目数量降序排列，展示挂科学生、挂科科目、总分
+  无挂科学生时显示提示文字
+  */
   function renderFailWarning(list) {
     const container = document.getElementById("failWarningList");
     container.innerHTML = "";
+    // 筛选出至少有一科不及格的学生
     const failStudents = list.filter(s => getFails(s).length > 0);
+    // 按不及格科目数量从多到少排序
     failStudents.sort((a,b) => getFails(b).length - getFails(a).length);
 
     if(failStudents.length === 0){
@@ -332,10 +358,11 @@
   }
 
 
-  /* ④ 搜索 —— 考察 filter + input 事件
-   * 按姓名或学号过滤 STUDENTS（忽略大小写、去空格）
-   * 无关键字时返回全部学生
-   */
+  /* ④ search：搜索过滤函数
+  入参keyword：搜索框输入文本
+  功能：去除空格、转小写，模糊匹配姓名或者学号；空输入返回全部学生
+  返回过滤后的学生数组
+  */
   function search(keyword) {
     const kw = keyword.trim().toLowerCase();
     if (!kw) return STUDENTS.slice();
@@ -345,11 +372,12 @@
   }
 
 
-  /* ⑤ 排序 —— 考察 sort + slice + querySelectorAll + classList
-   * by="total" 按总分降序；by="id" 按学号升序
-   * 返回新数组（不修改原数组）
-   */
-  var currentSort = "total";
+  /* ⑤ sortList：排序函数
+  入参list：待排序数组；by：排序标识total/id
+  功能：复制数组，不修改原数据；total按总分降序，id按学号升序
+  返回排序完成的新数组
+  */
+  var currentSort = "total"; // 记录当前选中排序方式，默认总分降序
   function sortList(list, by) {
     const arr = list.slice();
     if (by === "id") {
@@ -361,7 +389,8 @@
   }
 
 
-  /* ---------- 主刷新流程：依次调用上述函数 ---------- */
+  /* ---------- 主刷新函数 refresh：整个面板的调度核心 ---------- */
+  // 流程：拿到搜索关键词 → 搜索过滤 → 排序 → 依次渲染统计、学生卡片、不及格预警
   function refresh() {
     var kw = document.getElementById("searchInput").value;
     var data = sortList(search(kw), currentSort);
@@ -371,14 +400,15 @@
   }
 
 
-  /* ---------- 事件绑定（已给出，无需修改） ---------- */
+  /* ---------- 事件绑定 ---------- */
   var timer = null;
+  // 搜索框输入事件：防抖200ms，避免频繁刷新页面
   document.getElementById("searchInput").addEventListener("input", function () {
     clearTimeout(timer);
     timer = setTimeout(refresh, 200);
   });
 
-  // 排序按钮：事件委托 + querySelectorAll 切换高亮
+  // 排序按钮事件委托：点击按钮切换排序方式，切换active高亮，刷新页面
   document.getElementById("sortBtns").addEventListener("click", function (e) {
     var btn = e.target.closest("button");
     if (!btn) return;
@@ -388,9 +418,60 @@
     refresh();
   });
 
-  /* ---------- 初始化 ---------- */
+  /* ---------- 页面初始化：页面加载完成执行一次渲染 ---------- */
   refresh();
 })();
 </script>
 </body>
 </html>
+/*-----分数相关计算逻辑总结-----*/
+数据源：STUDENTS（学生对象）、SUBJECTS（科目数组），及格线固定 60
+单个学生总分 getTotal(s)
+遍历所有科目，把该学生每一科分数累加
+plaintext
+总分 = 所有科目分数相加
+单个学生平均分 getAvg(s)
+plaintext
+平均分 = 该学生总分 ÷ 科目数量，保留1位小数
+判断单科样式 scoreClass(v)
+分数＜60 → fail（红色，不及格）
+分数≥100 → full（绿色，满分）
+其他：无样式
+查找学生不及格科目 getFails(s)
+筛选该学生分数＜60 的科目，返回不及格科目数组
+数组长度 = 这名学生挂了几科
+面板顶部【班级总分数】（所有学生所有分数总和）
+双层 reduce：循环每一个学生，再循环每一个科目，全部分数累加
+plaintext
+班级总分 = 所有学生所有科目分数之和
+面板顶部【班级平均分】（整张试卷全局平均分）
+plaintext
+班级平均分 = 班级总分 ÷（筛选后的学生人数 × 科目总数）
+及格率（重点！不是平均分及格）
+及格定义：该学生没有任何一科不及格
+plaintext
+及格人数 = 筛选列表里，getFails(s).length === 0 的学生数量
+及格率 = 及格人数 ÷ 当前筛选总人数 × 100，取整数
+不及格预警排序规则
+筛选出有挂科的学生，按挂科科目数量从多到少排序，挂科越多排在越前面
+📌 一句话串起来
+先拿学生每科分数，算个人总分、个人均分；再统计全部学生所有分数得到班级总分、
+班级均分；再看谁没有任何一科不及格，算出及格率；预警区按挂科科目多少排序。
+//整体作用
+本页面是学生成绩分析面板，使用原生 HTML+CSS+JavaScript 实现
+，外部data.js提供学生、科目原始数据。页面骨架由 HTML 搭建，CSS 负责布局、配色、交互样式；
+JS 负责数据处理、DOM 动态渲染、搜索排序交互。
+整体数据流：原始学生数据 → 搜索过滤 → 排序 → 一次性渲染三大模块。
+模块分工
+CSS：定义主题变量、全局样式、卡片、网格、按钮、预警列表等样式，实现渐变背景、卡片悬浮、激活高亮、不及格标红满分标绿等视觉效果。
+HTML：只提供静态容器，划分 4 个业务区块：班级概览统计、数据操作区、不及格预警、学生卡片区，所有数据内容由 JS 动态生成。
+JS 工具函数：封装分数样式判断、总分、平均分、查找不及格科目、提取姓名首字，供核心函数复用。
+5 个核心业务函数
+renderStats：统计筛选后班级人数、总分、全体平均分、无挂科及格率，写入统计卡片；
+renderStudentCards：循环生成学生卡片，展示头像、姓名学号、排名、各科分数、总分均分；
+renderFailWarning：筛选挂科学生，按挂科科目数量降序展示预警名单；
+search：模糊搜索，支持姓名、学号检索，大小写不敏感；
+sortList：支持总分降序、学号升序两种排序，复制数组不污染原始数据。
+主调度 refresh()：页面刷新入口，每次搜索、切换排序都会执行，串联过滤、排序、渲染。
+事件：搜索输入防抖，减少频繁渲染；排序按钮使用事件委托，切换排序规则并高亮当前按钮。
+初始化：页面加载自动调用refresh()，首次渲染全部数据。

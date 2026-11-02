@@ -1,0 +1,228 @@
+<!--
+  作者：滕依灵
+  建立时间：2026-11-02
+  使用模型：DeepSeek-V4.1-Flash
+  功能名称及简介：汽车上市选项卡页 —— 最新上市/即将上市两个选项卡切换，默认显示最新上市
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>汽车上市选项卡</title>
+  <style>
+    /* ===== 基础重置与页面底色 ===== */
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 20px;
+      background: #f5f7fa;
+      color: #1f2937;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+
+    .tyl_page {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* ===== 顶部标题与返回首页链接 ===== */
+    .tyl_page__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .tyl_page__title {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .tyl_page__back {
+      color: #2563eb;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .tyl_page__back:hover {
+      text-decoration: underline;
+    }
+
+    /* ===== 选项卡容器 ===== */
+    .tyl_tabs {
+      --tyl-accent: #2563eb;
+      --tyl-border: #e5e7eb;
+      --tyl-muted: #6b7280;
+      background: #ffffff;
+      border: 1px solid var(--tyl-border);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    /* ===== 选项卡按钮栏 ===== */
+    .tyl_tabs__nav {
+      display: flex;
+      border-bottom: 1px solid var(--tyl-border);
+      background: #f9fafb;
+    }
+
+    .tyl_tabs__tab {
+      flex: 1;
+      padding: 14px 8px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      background: transparent;
+      color: var(--tyl-muted);
+      font-size: 15px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .tyl_tabs__tab:hover {
+      color: var(--tyl-accent);
+      background: #f3f4f6;
+    }
+
+    .tyl_tabs__tab:focus-visible {
+      outline: 2px solid var(--tyl-accent);
+      outline-offset: -2px;
+    }
+
+    /* 选中态：由 js 统一添加 is-active 类 */
+    .tyl_tabs__tab.is-active {
+      color: var(--tyl-accent);
+      border-bottom-color: var(--tyl-accent);
+      background: #ffffff;
+      font-weight: 600;
+    }
+
+    /* ===== 内容面板 ===== */
+    .tyl_tabs__panels {
+      padding: 24px;
+      min-height: 220px;
+    }
+
+    /* 表格样式，还原截图布局 */
+    .car-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .car-table th,
+    .car-table td {
+      padding: 12px 8px;
+      text-align: left;
+      border-bottom: 1px dashed var(--tyl-border);
+    }
+    .car-table th {
+      font-weight: 600;
+    }
+    .car-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* [hidden] 由 js 控制面板显隐，这里保证优先级 */
+    .tyl_tabs__panel[hidden] {
+      display: none;
+    }
+
+    /* ===== 移动端适配 ===== */
+    @media (max-width: 560px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .tyl_tabs__tab {
+        padding: 12px 4px;
+        font-size: 13px;
+      }
+
+      .tyl_tabs__panels {
+        padding: 16px;
+      }
+      .car-table th,
+      .car-table td {
+        padding: 8px 4px;
+        font-size:14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tyl_page">
+    <header class="tyl_page__header">
+      <h1 class="tyl_page__title">新车上市</h1>
+      <a class="tyl_page__back" href="index.html">← 返回首页</a>
+    </header>
+
+    <!-- 选项卡容器：data-tyl-tabs 标记可复用组件，data-tyl-default 指定默认选中项 -->
+    <div class="tyl_tabs" data-tyl-tabs data-tyl-default="new">
+      <div class="tyl_tabs__nav" role="tablist" aria-label="新车分类">
+        <button class="tyl_tabs__tab" type="button" role="tab" data-tyl-tab="new"
+                aria-selected="true" aria-controls="tyl_panel_new">最新上市</button>
+        <button class="tyl_tabs__tab" type="button" role="tab" data-tyl-tab="soon"
+                aria-selected="false" aria-controls="tyl_panel_soon">即将上市</button>
+      </div>
+
+      <div class="tyl_tabs__panels">
+        <section class="tyl_tabs__panel" id="tyl_panel_new" role="tabpanel" data-tyl-panel="new">
+          <table class="car-table">
+            <thead>
+              <tr>
+                <th>上市时间</th>
+                <th>品牌/车型</th>
+                <th>售价(万元)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>12月13日</td>
+                <td>沃尔沃S60L</td>
+                <td>26.99-38.49</td>
+              </tr>
+              <tr>
+                <td>12月12日</td>
+                <td>Jeep牧马人龙腾典藏</td>
+                <td>47.99-59.99</td>
+              </tr>
+              <tr>
+                <td>12月10日</td>
+                <td>一汽大众高尔夫7</td>
+                <td>11.89-18.29</td>
+              </tr>
+              <tr>
+                <td>12月6日</td>
+                <td>2014款古思特</td>
+                <td>419.0-666.0</td>
+              </tr>
+              <tr>
+                <td>12月5日</td>
+                <td>起亚新款K5</td>
+                <td>15.98-25.18</td>
+              </tr>
+              <tr>
+                <td>12月5日</td>
+                <td>2014款奥德赛</td>
+                <td>22.98-28.68</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="tyl_tabs__panel" id="tyl_panel_soon" role="tabpanel" data-tyl-panel="soon" hidden>
+          <p>即将上市车型信息待更新</p>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- 选项卡逻辑放在 js/tyl-tabs.js，外部引用，可跨页面复用 -->
+  <script src="js/tyl-tabs.js"></script>
+</body>
+</html>
